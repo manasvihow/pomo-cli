@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# Build and Distribution
+build/
+dist/
+*.egg-info/
+*.spec
+
+# IDE / Editor Files
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Log file (optional, but good practice to ignore user data)
+pomo_log.json
