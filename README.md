@@ -1,4 +1,4 @@
-# 🍅 Pomo CLI - A Simple Pomodoro Timer
+# 🍅 Pomo CLI
 
 A simple Pomodoro timer for your command line. 
 
