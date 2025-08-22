@@ -88,24 +88,32 @@ def cli():
 def start(duration, description, tags):
     """Starts a new Pomodoro session."""
     duration_seconds = parse_duration(duration)
-    minutes_for_display = round(duration_seconds / 60.0, 2)
     
-    click.echo(f"Starting a {minutes_for_display}-minute session for: '{description}' 🧘")
+    click.echo(f"Starting session: '{description}' 🧘")
+
     end_time = time.time() + duration_seconds
-    last_displayed_time = ""
+    
     while time.time() < end_time:
         remaining_seconds = int(end_time - time.time())
         remaining_seconds = max(0, remaining_seconds)
+
+        progress_percentage = (duration_seconds - remaining_seconds) / duration_seconds
+        bar_length = 20
+        filled_length = int(bar_length * progress_percentage)
+        bar = '🍅' * filled_length + '─' * (bar_length - filled_length)
+
         mins, secs = divmod(remaining_seconds, 60)
         time_string = f"{mins:02d}:{secs:02d}"
-        if time_string != last_displayed_time:
-            click.echo(f"  ⏳ Time remaining: {time_string}", nl=False)
-            click.echo('\r', nl=False)
-            last_displayed_time = time_string
-        time.sleep(0.1)
+        
+        display_line = f"  ⏳ {time_string} [{bar}]"
+        click.echo(f"\r{display_line}   ", nl=False)
+        
+        time.sleep(0.2)
     
-    click.echo("  ⏳ Time remaining: 00:00")
-    final_message = f"🎉 Session '{description}' finished! Time for a short break. 🎉"
+    final_bar = '🍅' * 20
+    click.echo(f"\r  ⏳ 00:00 [{final_bar}]   ")
+
+    final_message = f"\n🎉 Session '{description}' finished! Time for a short break. 🎉"
     click.echo(final_message)
     play_alert_sound()
     log_session(duration_seconds, description, tags)
@@ -116,25 +124,34 @@ def start(duration, description, tags):
 def break_timer(duration):
     """Starts a break session."""
     duration_seconds = parse_duration(duration)
-    minutes_for_display = round(duration_seconds / 60.0, 2)
     
-    click.echo(f"Starting a {minutes_for_display}-minute break. Time to relax! ☕")
+    click.echo(f"Starting break. Time to relax! ☕")
+    
     end_time = time.time() + duration_seconds
-    last_displayed_time = ""
+    
     while time.time() < end_time:
         remaining_seconds = int(end_time - time.time())
         remaining_seconds = max(0, remaining_seconds)
+        
+        # --- NEW: Progress bar logic for the break command ---
+        progress_percentage = (duration_seconds - remaining_seconds) / duration_seconds
+        bar_length = 20
+        filled_length = int(bar_length * progress_percentage)
+        bar = '☕' * filled_length + '─' * (bar_length - filled_length)
+        
         mins, secs = divmod(remaining_seconds, 60)
         time_string = f"{mins:02d}:{secs:02d}"
-        if time_string != last_displayed_time:
-            click.echo(f"  ⏳ Time remaining: {time_string}", nl=False)
-            click.echo('\r', nl=False)
-            last_displayed_time = time_string
-        time.sleep(0.1)
         
-    click.echo("  ⏳ Time remaining: 00:00")
-    final_message = "🎉 Break is over! Time to get back to it. 🎉"
-    click.echo(f"\n{final_message}")
+        display_line = f"  ⏳ {time_string} [{bar}]"
+        click.echo(f"\r{display_line}   ", nl=False)
+        
+        time.sleep(0.2)
+        
+    final_bar = '☕' * 20
+    click.echo(f"\r  ⏳ 00:00 [{final_bar}]   ")
+    
+    final_message = "\n🎉 Break is over! Time to get back to it. 🎉"
+    click.echo(final_message)
     play_alert_sound()
 
 
@@ -176,7 +193,6 @@ def path():
     click.echo("Your log file is located at:")
     click.echo(os.path.abspath(log_file))
 
-# --- NEW: The command to show history ---
 @cli.command()
 @click.option('--all', '-a', is_flag=True, help="Show all log entries instead of the default last 10.")
 @click.option('--number', '-n', default=10, type=int, help="Number of recent entries to show.")
@@ -185,35 +201,27 @@ def log(all, number):
     if not os.path.exists(log_file):
         click.echo("Log file not found. No history to show.")
         return
-
     with open(log_file, 'r') as f:
         try:
             logs = json.load(f)
         except json.JSONDecodeError:
             click.echo("Log file is empty or corrupt.")
             return
-            
     if not logs:
         click.echo("No sessions logged yet.")
         return
-
     if not all:
         logs_to_show = logs[-number:]
     else:
         logs_to_show = logs
-
-    # Print a header
-    click.echo(f"{'Timestamp':<20} {'Duration (min)':<15} {'Description':<30} {'Tags'}")
+    click.echo(f"{'Timestamp':<20} {'Duration (sec)':<15} {'Description':<30} {'Tags'}")
     click.echo("-" * 80)
-
     for session in reversed(logs_to_show):
         timestamp = session.get('timestamp', 'N/A')
         duration_sec = session.get('duration_seconds', 0)
-        duration_min = round(duration_sec / 60.0, 2)
         description = session.get('description', 'N/A')
         tags = session.get('tags', '')
-        
-        click.echo(f"{timestamp:<20} {str(duration_min):<15} {description:<30} {tags}")
+        click.echo(f"{timestamp:<20} {str(duration_sec):<15} {description:<30} {tags}")
 
 
 if __name__ == '__main__':
