@@ -5,7 +5,6 @@ import platform
 import json
 import re
 
-# We use a try-except block because this module only exists on Windows
 try:
     import winsound
 except ImportError:
@@ -72,7 +71,6 @@ def log_session(duration_seconds, description, tags):
         json.dump(logs, f, indent=4)
 
 
-# --- Main CLI Group ---
 @click.group()
 def cli():
     """A simple Pomodoro timer CLI."""
@@ -133,7 +131,6 @@ def break_timer(duration):
         remaining_seconds = int(end_time - time.time())
         remaining_seconds = max(0, remaining_seconds)
         
-        # --- NEW: Progress bar logic for the break command ---
         progress_percentage = (duration_seconds - remaining_seconds) / duration_seconds
         bar_length = 20
         filled_length = int(bar_length * progress_percentage)
