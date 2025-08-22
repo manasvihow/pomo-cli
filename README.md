@@ -1,19 +1,38 @@
 # 🍅 Pomo CLI - A Simple Pomodoro Timer
 
-A simple, elegant, and powerful Pomodoro timer for your command line. Boost your productivity and track your work sessions without ever leaving the terminal.
+A simple Pomodoro timer for your command line. 
 
 ---
 
 ## ✨ Features
 
-* **Simple Commands**: Intuitive `start`, `break`, `log`, and `repeat` commands.
-* **Flexible Durations**: Specify time in various formats like `30s`, `5m`, or `22m30s`.
-* **Categorize with Tags**: Add comma-separated tags to your sessions for better organization (e.g., `--tags writing,blog` or `-t writing, blog`).
-* **Task Logging**: Automatically logs all completed sessions to a local `pomo_log.json` file.
-* **Session History**: View your completed Pomodoros with the `log` command.
-* **Repeat Tasks**: Quickly restart a previous task using the `repeat` command.
-* **Visual Progress Bar**: A clean, emoji-powered progress bar shows your time remaining.
+* Intuitive `start`, `break`, `log`, and `repeat` commands.
+* Specify time in various formats like `30s`, `5m`, or `22m30s`.
+* Add comma-separated tags to your sessions for better organization (e.g., `--tags writing,blog`).
+* Automatically logs all completed sessions to a local `pomo_log.json` file.
+* View your completed Pomodoros with the `log` command.
+* Quickly restart a previous task using the `repeat` command.
 * **Cross-Platform**: Works on macOS, Windows, and Linux.
+
+### Live Timer Display
+
+When you start a session, you'll see a live progress bar that fills up with tomatoes as you go:
+
+```
+
+# At the start
+
+⏳ 25:00 [────────────────────] Writing the first draft
+
+# A few minutes later...
+
+⏳ 18:45 [🍅🍅🍅🍅🍅─────────────] Writing the first draft
+
+# Almost done!
+
+⏳ 01:15 [🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅🍅─] Writing the first draft
+
+````
 
 ---
 
@@ -36,7 +55,7 @@ Once installed, you can use the `pomo` command from anywhere in your terminal.
 Start a default 25-minute work session:
 
 ```bash
-pomo start "Writing the first draft" --t writing,blog
+pomo start "Writing the first draft" --tags writing,blog
 ```
 
 Start a quick 30-second session:
@@ -53,7 +72,7 @@ Start a default 5-minute break:
 pomo break
 ```
 
-Start a custom duration break:
+Start a custom break:
 
 ```bash
 pomo break -d 15m
